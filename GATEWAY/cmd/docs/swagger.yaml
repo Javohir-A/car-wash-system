@@ -1,0 +1,1078 @@
+basePath: /
+definitions:
+  auth.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  auth.UserRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      password:
+        description: This should be hashed before storing
+        type: string
+      phone_number:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  bookings.Booking:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/bookings.Location'
+      provider_id:
+        type: string
+      scheduled_time:
+        type: string
+      service_id:
+        type: string
+      status:
+        type: string
+      total_price:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  bookings.BookingsList:
+    properties:
+      bookings:
+        items:
+          $ref: '#/definitions/bookings.Booking'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+    type: object
+  bookings.Location:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      latitude:
+        type: string
+      longitude:
+        type: string
+    type: object
+  bookings.NewBooking:
+    properties:
+      location:
+        $ref: '#/definitions/bookings.Location'
+      provider_id:
+        type: string
+      scheduled_time:
+        type: string
+      service_id:
+        type: string
+      status:
+        type: string
+      total_price:
+        type: number
+      user_id:
+        type: string
+    type: object
+  bookings.NewData:
+    properties:
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/bookings.Location'
+      scheduled_time:
+        type: string
+      status:
+        type: string
+      total_price:
+        type: number
+    type: object
+  models.RegisterRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+      username:
+        type: string
+    type: object
+  payments.NewPayment:
+    properties:
+      amount:
+        type: number
+      booking_id:
+        type: string
+      payment_method:
+        type: string
+      status:
+        type: string
+      transaction_id:
+        type: string
+    type: object
+  payments.Payment:
+    properties:
+      amount:
+        type: number
+      booking_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      payment_method:
+        type: string
+      status:
+        type: string
+      transaction_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  payments.PaymentsList:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      payments:
+        items:
+          $ref: '#/definitions/payments.Payment'
+        type: array
+    type: object
+  providers.Filter:
+    properties:
+      average_rating:
+        type: number
+      created_at:
+        type: string
+      name:
+        type: string
+    type: object
+  providers.Location:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      latitude:
+        type: string
+      longitude:
+        type: string
+    type: object
+  providers.NewProvider:
+    properties:
+      availability:
+        items:
+          type: string
+        type: array
+      average_rating:
+        type: number
+      company_name:
+        type: string
+      description:
+        type: string
+      location:
+        $ref: '#/definitions/providers.Location'
+      services:
+        items:
+          type: string
+        type: array
+      user_id:
+        type: string
+    type: object
+  providers.Provider:
+    properties:
+      availability:
+        items:
+          type: string
+        type: array
+      average_rating:
+        type: number
+      company_name:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/providers.Location'
+      services:
+        items:
+          type: string
+        type: array
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  providers.SearchResp:
+    properties:
+      providers:
+        items:
+          $ref: '#/definitions/providers.Provider'
+        type: array
+    type: object
+  services.CreateResp:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+    type: object
+  services.NewData:
+    properties:
+      description:
+        type: string
+      duration:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  services.NewService:
+    properties:
+      description:
+        type: string
+      duration:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  services.Pagination:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+    type: object
+  services.Service:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      duration:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  services.ServicesList:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      services:
+        items:
+          $ref: '#/definitions/services.Service'
+        type: array
+    type: object
+  services.UpdateResp:
+    properties:
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API Endpoints for car wash app
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: '# Car Wash System'
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Log in a user with email and password
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: User login
+      tags:
+      - User Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with an email and password
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new user
+      tags:
+      - User Auth
+  /booking:
+    post:
+      consumes:
+      - application/json
+      description: Create a new booking with the given details
+      parameters:
+      - description: CreateBooking Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/bookings.NewBooking'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new booking
+      tags:
+      - Bookings
+  /booking/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a booking by its ID
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete booking by ID
+      tags:
+      - Bookings
+    get:
+      consumes:
+      - application/json
+      description: Retrieve booking details by its ID
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/bookings.Booking'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get booking by ID
+      tags:
+      - Bookings
+    put:
+      consumes:
+      - application/json
+      description: Update the details of a booking by its ID
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: UpdateBooking Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/bookings.NewData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update booking by ID
+      tags:
+      - Bookings
+  /booking/search:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve a list of bookings with optional filtering
+      parameters:
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: page
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/bookings.BookingsList'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all bookings
+      tags:
+      - Bookings
+  /payments:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of payments with optional filtering
+      parameters:
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: page
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payments.PaymentsList'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all payments
+      tags:
+      - Payments
+    post:
+      consumes:
+      - application/json
+      description: Create a new payment with the given details
+      parameters:
+      - description: CreatePayment Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payments.NewPayment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new payment
+      tags:
+      - Payments
+  /payments/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve payment details by its ID
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payments.Payment'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get payment by ID
+      tags:
+      - Payments
+  /provider/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new provider with the given details
+      parameters:
+      - description: RegisterProvider Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/providers.NewProvider'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new provider
+      tags:
+      - Provider
+  /provider/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for providers based on filters such as name, average rating,
+        and creation date
+      parameters:
+      - description: SearchProviders Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/providers.Filter'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/providers.SearchResp'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Search for providers
+      tags:
+      - Provider
+  /services:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all services with pagination
+      parameters:
+      - description: Pagination Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.Pagination'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.ServicesList'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all services
+      tags:
+      - Service
+    post:
+      consumes:
+      - application/json
+      description: Create a new service in the system
+      parameters:
+      - description: CreateService Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.NewService'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/services.CreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new service
+      tags:
+      - Service
+  /services/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a service from the system by its ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a specific service by ID
+      tags:
+      - Service
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a service by its ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.Service'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a specific service by ID
+      tags:
+      - Service
+    put:
+      consumes:
+      - application/json
+      description: Update the details of a service by its ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: UpdateService Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.NewData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.UpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a specific service by ID
+      tags:
+      - Service
+  /user/:
+    get:
+      consumes:
+      - application/json
+      description: Get Users
+      parameters:
+      - description: page
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: get users by page and limit
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: CreateUser Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: UserCreate a new user
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update a user
+      parameters:
+      - description: UpdateUser Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a user
+      tags:
+      - User
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user by id
+      parameters:
+      - description: Delete user by id Request
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a user by their id
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Get user by id
+      parameters:
+      - description: Get user by id Request
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a user by their id
+      tags:
+      - User
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
