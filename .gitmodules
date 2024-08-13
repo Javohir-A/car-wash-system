@@ -4,3 +4,12 @@
 [submodule "AUTH/protos"]
 	path = AUTH/protos
 	url = https://github.com/Javohir-A/car-wash-system-protos.git
+[submodule "GATEWAY/car-wash-system-protos"]
+	path = GATEWAY/car-wash-system-protos
+	url = https://github.com/Javohir-A/car-wash-system-protos.git
+[submodule "GATEWAY/protos"]
+	path = GATEWAY/protos
+	url = https://github.com/Javohir-A/car-wash-system-protos.git
+[submodule "BOOKING/protos"]
+	path = BOOKING/protos
+	url = https://github.com/Javohir-A/car-wash-system-protos.git
