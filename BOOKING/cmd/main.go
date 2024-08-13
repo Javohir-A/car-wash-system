@@ -1,6 +1,7 @@
 package main
 
 import (
+	"booking-service/genproto/bookings"
 	"booking-service/genproto/providers"
 	"booking-service/genproto/services"
 	"booking-service/internal/service"
@@ -29,12 +30,14 @@ func main() {
 	mongoDb := mongoClient.Database("booking-service")
 
 	providerMongoStorage := mongostorage.NewProviderMongoStorage(mongoDb.Collection("providers"))
+	serviceStorage := mongostorage.NewServicesMongoStorage(mongoDb.Collection("services"))
+	bookingsStorage := mongostorage.NewBookingsStorage(mongoDb.Collection("bookings"))
 
 	providerService := service.NewProviderService(logger, providerMongoStorage)
-
-	serviceStorage := mongostorage.NewServicesMongoStorage(mongoDb.Collection("services"))
 	servicesService := service.NewServicesService(logger, serviceStorage)
+	bookingsService := service.NewBookingService(logger, bookingsStorage)
 
+	bookings.RegisterBookingsServer(grpcServer, bookingsService)
 	services.RegisterServicesServer(grpcServer, servicesService)
 	providers.RegisterProvidersServer(grpcServer, providerService)
 
