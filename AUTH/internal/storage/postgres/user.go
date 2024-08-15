@@ -265,24 +265,30 @@ func (um *UserManagementImpl) DeleteUser(ctx context.Context, id string) error {
 	}
 
 	cacheKey := fmt.Sprintf("user:%v", id)
-	if _, err := um.redis.Del(ctx, cacheKey).Result(); err != nil {
-		return err
-	}
+
+	um.redis.Del(ctx, cacheKey)
 
 	tx.Commit()
 	return nil
 }
+func (um *UserManagementImpl) ListUsers(ctx context.Context, pageNumber, pageSize int32) ([]*auth.UserResponse, error) {
+	fmt.Println(pageNumber, pageSize)
+	if pageNumber < 1 {
+		return nil, fmt.Errorf("invalid page number: %d", pageNumber)
+	}
+	if pageSize < 1 {
+		return nil, fmt.Errorf("invalid page size: %d", pageSize)
+	}
 
-func (um *UserManagementImpl) ListUsers(ctx context.Context, page, limit int32) ([]*auth.UserResponse, error) {
 	var users []*auth.UserResponse
-	offest := (page - 1) * limit
+	offset := (pageNumber - 1) * pageSize
 
 	query := um.sqlBuilder.
-		Select("*").
+		Select("id", "first_name", "last_name", "phone_number", "username", "email", "role", "created_at", "updated_at").
 		From("users").
 		Where(sq.Eq{"deleted_at": nil}).
-		Limit(uint64(limit)).
-		Offset(uint64(offest))
+		Limit(uint64(pageSize)).
+		Offset(uint64(offset))
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -297,9 +303,21 @@ func (um *UserManagementImpl) ListUsers(ctx context.Context, page, limit int32) 
 
 	for rows.Next() {
 		var user auth.UserResponse
-		if err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.Username, &user.Email, &user.Role, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		var createdAt, updatedAt string
+		if err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.Username, &user.Email, &user.Role, &createdAt, &updatedAt); err != nil {
 			return nil, err
 		}
+		createdTimeType, err := time.Parse(time.RFC3339, createdAt)
+		if err != nil {
+			return nil, nil
+		}
+		updatedTimeType, err := time.Parse(time.RFC3339, updatedAt)
+		if err != nil {
+			return nil, nil
+		}
+		user.CreatedAt = timestamppb.New(createdTimeType)
+		user.UpdatedAt = timestamppb.New(updatedTimeType)
+
 		users = append(users, &user)
 	}
 
@@ -394,7 +412,7 @@ func (um *UserManagementImpl) GetUserByUsernameOrEmail(ctx context.Context, emai
 	}
 
 	query, args, err := builder.Where(sq.Or{
-		filter,
+		sq.Eq{"username": username},
 	}).ToSql()
 
 	if err != nil {

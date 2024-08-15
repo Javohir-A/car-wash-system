@@ -8,13 +8,14 @@ import (
 
 type (
 	Config struct {
-		Server   ServerConfig
-		Database DatabaseConfig
-		Redis    RedisConfig
-		JWT      JWTConfig
-		RabbitMQ RabbitMQConfig
-		Auth     string
-		Booking  string
+		Server      ServerConfig
+		Database    DatabaseConfig
+		Redis       RedisConfig
+		JWT         JWTConfig
+		RabbitMQ    RabbitMQConfig
+		MongoConfig MongoConfig
+		Auth        string
+		Booking     string
 	}
 	JWTConfig struct {
 		SecretKey string
@@ -38,10 +39,16 @@ type (
 	RabbitMQConfig struct {
 		RabbitMQ string
 	}
+	MongoConfig struct {
+		User     string
+		Password string
+		Host     string
+		Port     string
+		DBname   string
+	}
 )
 
 func (c *Config) Load() error {
-
 	if err := godotenv.Load(); err != nil {
 		return err
 	}
@@ -62,8 +69,13 @@ func (c *Config) Load() error {
 
 	c.RabbitMQ.RabbitMQ = os.Getenv("RABBITMQ_URL")
 
-	//gateway specific config
-	c.Auth = os.Getenv("")
+	c.MongoConfig.User = os.Getenv("MONGO_USER")
+	c.MongoConfig.Host = os.Getenv("MONGO_HOST")
+	c.MongoConfig.Password = os.Getenv("MONGO_PASS")
+	c.MongoConfig.Port = os.Getenv("MONGO_PORT")
+	c.MongoConfig.DBname = os.Getenv("MONGO_DBNAME")
+
+	c.Auth = os.Getenv("AUTH")
 	return nil
 }
 

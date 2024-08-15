@@ -62,7 +62,7 @@ func (a *AuthHandler) Register(c *gin.Context) {
 	res, err := a.user.CreateUser(ctx, &grpcReq)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "couldn't create user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "couldn't create user: " + err.Error()})
 		return
 	}
 

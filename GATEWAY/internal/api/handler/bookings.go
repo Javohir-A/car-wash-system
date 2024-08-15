@@ -2,22 +2,36 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	pb "gateway/genproto/bookings"
+	"gateway/internal/msgbroker"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 
 	"github.com/gin-gonic/gin"
 )
 
 type BookingHandler struct {
 	bookingClient pb.BookingsClient
+	create        amqp.Queue
+	update        amqp.Queue
+	cancel        amqp.Queue
+	msgBroker     *msgbroker.MsgBroker
+	logger        *log.Logger
 }
 
-func NewBookingHandler(client pb.BookingsClient) *BookingHandler {
+func NewBookingHandler(client pb.BookingsClient, create amqp.Queue, update amqp.Queue, cancel amqp.Queue, msg *msgbroker.MsgBroker, logger *log.Logger) *BookingHandler {
 	return &BookingHandler{
+		create:        create,
+		update:        update,
+		cancel:        cancel,
 		bookingClient: client,
+		msgBroker:     msg,
+		logger:        logger,
 	}
 }
 
@@ -33,23 +47,29 @@ func NewBookingHandler(client pb.BookingsClient) *BookingHandler {
 // @Failure 500 {object} map[string]interface{}
 // @Router /booking [post]
 func (h *BookingHandler) CreateBooking(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
 
 	var req pb.NewBooking
 	if err := c.BindJSON(&req); err != nil {
-		log.Println(err)
+		h.logger.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	res, err := h.bookingClient.CreateBooking(ctx, &req)
+	data, err := json.Marshal(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't create booking"})
+		h.logger.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "cannot unmarshal request"})
 		return
 	}
-	c.JSON(http.StatusCreated, res)
+
+	err = h.msgBroker.PublishToQueue(h.msgBroker.CreateBooking, data, h.create, "application/json")
+	if err != nil {
+		h.logger.Println("-- ERROR FROM SERVER -- `: ", err)
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, "Booking created successfully")
 }
 
 // ListBookings godoc
@@ -71,11 +91,13 @@ func (h *BookingHandler) ListBookings(c *gin.Context) {
 	l := c.Query("limit")
 	limit, err := strconv.Atoi(l)
 	if err != nil {
+		h.logger.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid limit"})
 	}
 	p := c.Query("page")
 	page, err := strconv.Atoi(p)
 	if err != nil {
+		h.logger.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid page"})
 	}
 
@@ -84,15 +106,9 @@ func (h *BookingHandler) ListBookings(c *gin.Context) {
 		Page:  int32(page),
 	}
 
-	if err := c.BindJSON(&req); err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-
 	res, err := h.bookingClient.ListBookings(ctx, &req)
 	if err != nil {
-		log.Println(err)
+		h.logger.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't list bookings"})
 		return
 	}
@@ -120,7 +136,8 @@ func (h *BookingHandler) GetBooking(c *gin.Context) {
 
 	res, err := h.bookingClient.GetBooking(ctx, req)
 	if err != nil {
-		log.Println(err)
+		h.logger.Println(err)
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't retrieve booking"})
 		return
 	}
@@ -147,7 +164,7 @@ func (h *BookingHandler) UpdateBooking(c *gin.Context) {
 	id := c.Param("id")
 	var req pb.NewData
 	if err := c.BindJSON(&req); err != nil {
-		log.Println(err)
+		h.logger.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
@@ -155,7 +172,7 @@ func (h *BookingHandler) UpdateBooking(c *gin.Context) {
 
 	res, err := h.bookingClient.UpdateBooking(ctx, &req)
 	if err != nil {
-		log.Println(err)
+		h.logger.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't update booking"})
 		return
 	}
@@ -183,7 +200,7 @@ func (h *BookingHandler) DeleteBooking(c *gin.Context) {
 
 	_, err := h.bookingClient.CancelBooking(ctx, req)
 	if err != nil {
-		log.Println(err)
+		h.logger.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't delete booking"})
 		return
 	}

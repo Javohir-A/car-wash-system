@@ -4,6 +4,7 @@ import (
 	"booking-service/genproto/bookings"
 	"booking-service/genproto/payments"
 	"booking-service/genproto/providers"
+	"booking-service/genproto/reviews"
 	"booking-service/genproto/services"
 	"context"
 )
@@ -34,4 +35,11 @@ type PaymentsStorage interface {
 	CreatePayment(context.Context, *payments.NewPayment) (*payments.CreateResp, error)
 	GetPayment(context.Context, *payments.ID) (*payments.Payment, error)
 	ListPayments(context.Context, *payments.Pagination) (*payments.PaymentsList, error)
+}
+
+type ReviewsStorage interface {
+	CreateReview(context.Context, *reviews.NewReview) (*reviews.CreateResp, error)
+	DeleteReview(context.Context, *reviews.ID) (*reviews.Void, error)
+	ListReviews(context.Context, *reviews.Pagination) (*reviews.ReviewsList, error)
+	UpdateReview(context.Context, *reviews.NewData) (*reviews.UpdateResp, error)
 }

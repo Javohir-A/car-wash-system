@@ -60,11 +60,13 @@ func (c *Config) Load() error {
 
 	c.JWT.SecretKey = os.Getenv("JWT_SECRET_KEY")
 
-	c.RabbitMQ.RabbitMQ = os.Getenv("RABBITMQ_URL")
+	c.RabbitMQ.RabbitMQ = os.Getenv("RABBITMQ_URI")
 
 	//gateway specific config
-	c.Auth = os.Getenv("")
-	c.Booking = os.Getenv("")
+	c.Auth = os.Getenv("AUTH_SERVER")
+	c.Booking = os.Getenv("BOOKING_SEVER")
+
+	// pp.Println(c)
 
 	return nil
 }

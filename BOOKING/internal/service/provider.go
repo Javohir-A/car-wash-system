@@ -4,16 +4,16 @@ import (
 	"booking-service/genproto/providers"
 	"booking-service/internal/storage"
 	"context"
-	"log/slog"
+	"log"
 )
 
 type ProviderService struct {
-	log *slog.Logger
+	log *log.Logger
 	providers.UnimplementedProvidersServer
 	providerStorage storage.ProvidersStorage
 }
 
-func NewProviderService(log *slog.Logger, provider storage.ProvidersStorage) *ProviderService {
+func NewProviderService(log *log.Logger, provider storage.ProvidersStorage) *ProviderService {
 	return &ProviderService{
 		log:             log,
 		providerStorage: provider,

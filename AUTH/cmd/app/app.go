@@ -16,7 +16,7 @@ func Run(cnf *config.ServerConfig, autService *service.AuthServiceImpl) error {
 	if err != nil {
 		return err
 	}
-
+	
 	grpcServer := grpc.NewServer()
 	auth.RegisterAuthServiceServer(grpcServer, autService)
 	auth.RegisterUserManagementServiceServer(grpcServer, autService)

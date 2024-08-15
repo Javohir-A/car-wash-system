@@ -15,9 +15,9 @@ type PaymentsStorage struct {
 	collection *mongo.Collection
 }
 
-func NewPaymentsStorage(db *mongo.Database) *PaymentsStorage {
+func NewPaymentsStorage(col *mongo.Collection) *PaymentsStorage {
 	return &PaymentsStorage{
-		collection: db.Collection("payments"),
+		collection: col,
 	}
 }
 
@@ -92,11 +92,11 @@ func (s *PaymentsStorage) GetPayment(ctx context.Context, req *payments.ID) (*pa
 		}
 		return nil, err
 	}
-
+	amount := payment["amount"].(float64)
 	return &payments.Payment{
 		Id:            payment["_id"].(primitive.ObjectID).Hex(),
 		BookingId:     payment["booking_id"].(string),
-		Amount:        payment["amount"].(float32),
+		Amount:        float32(amount),
 		Status:        payment["status"].(string),
 		PaymentMethod: payment["payment_method"].(string),
 		TransactionId: payment["transaction_id"].(string),

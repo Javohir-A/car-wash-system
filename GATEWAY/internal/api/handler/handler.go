@@ -7,6 +7,7 @@ type MainHandler interface {
 	ServiceManagement() *ServiceManagementHandler
 	BookingsManagement() *BookingHandler
 	PaymentManagement() *PaymentHandler
+	ReviewManagement() *ReviewHandler
 }
 
 type MainHandlerImp struct {
@@ -16,11 +17,12 @@ type MainHandlerImp struct {
 	ser     *ServiceManagementHandler
 	booking *BookingHandler
 	payment *PaymentHandler
+	reviews *ReviewHandler
 }
 
 func NewMainHandler(user *UserManagementHandler, auth *AuthHandler,
 	pro *ProviderManagementHandler, ser *ServiceManagementHandler,
-	bookings *BookingHandler, payment *PaymentHandler) MainHandler {
+	bookings *BookingHandler, payment *PaymentHandler, rev *ReviewHandler) MainHandler {
 	return &MainHandlerImp{
 		user:    user,
 		auth:    auth,
@@ -28,6 +30,7 @@ func NewMainHandler(user *UserManagementHandler, auth *AuthHandler,
 		ser:     ser,
 		booking: bookings,
 		payment: payment,
+		reviews: rev,
 	}
 }
 
@@ -53,4 +56,8 @@ func (m *MainHandlerImp) BookingsManagement() *BookingHandler {
 
 func (m *MainHandlerImp) PaymentManagement() *PaymentHandler {
 	return m.payment
+}
+
+func (m *MainHandlerImp) ReviewManagement() *ReviewHandler {
+	return m.reviews
 }

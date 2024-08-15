@@ -65,7 +65,7 @@ func SetupRouter(r *gin.Engine, handler handler.MainHandler) {
 	bookings := r.Group("/booking")
 	{
 		bookings.POST("", handler.BookingsManagement().CreateBooking)
-		bookings.GET("/search", handler.BookingsManagement().ListBookings)
+		bookings.POST("/search", handler.BookingsManagement().ListBookings)
 		bookings.GET("/:id", handler.BookingsManagement().GetBooking)
 		bookings.PUT("/:id", handler.BookingsManagement().UpdateBooking)
 		bookings.DELETE("/:id", handler.BookingsManagement().DeleteBooking)
@@ -80,6 +80,10 @@ func SetupRouter(r *gin.Engine, handler handler.MainHandler) {
 
 	reviews := r.Group("/reviews")
 	{
-		reviews
+		reviews.POST("/", handler.ReviewManagement().CreateReview)
+		reviews.GET("/", handler.ReviewManagement().ListReviews)
+		// reviews.GET("/:id", handler.ReviewManagement().GetReview)
+		reviews.PUT("/:id", handler.ReviewManagement().UpdateReview)
+		reviews.DELETE("/:id", handler.ReviewManagement().DeleteReview)
 	}
 }

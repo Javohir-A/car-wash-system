@@ -1,0 +1,151 @@
+version: '3.9'
+
+services:
+
+  postgres-db:
+    container_name: postgres
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1702
+      - POSTGRES_DB=car_wash_users
+    ports:
+      - "5433:5432"
+    volumes:
+      - db:/var/lib/postgresql/data 
+    networks:
+      - car-wash
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  migrate:
+    image: migrate/migrate
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://postgres:1702@postgres:5432/car_wash_users?sslmode=disable",
+      "up"
+    ]
+    volumes:
+      - ./AUTH/migrations:/migrations
+    networks:
+      - car-wash
+    depends_on:
+      - postgres-db
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=1702
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - car-wash
+    healthcheck:
+      test: ["CMD-SHELL", "mongo --eval 'db.runCommand(\"ping\").ok'"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6378:6379"
+    volumes:
+      - redis_volume_data:/data
+    networks:
+      - car-wash
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+      
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"  
+    networks:
+      - car-wash
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  auth:
+    container_name: auth
+    build: ./AUTH
+    depends_on:
+      - postgres-db
+      - migrate
+    ports:
+      - "50050:50050"
+    networks:
+     - car-wash
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:50050/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  booking:
+    container_name: booking
+    build: ./BOOKING
+    depends_on: 
+      - mongodb
+    ports:
+      - "50051:50051"
+    networks:
+      - car-wash
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:50051/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  gateway:
+    container_name: gateway
+    build: ./GATEWAY
+    depends_on:
+      - auth
+      - booking
+      - redis
+      - rabbitmq  
+    ports:
+      - "8080:8080"
+    networks:
+      - car-wash
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+networks:
+  car-wash:
+    external: true
+    driver: bridge
+volumes:
+  mongo-data:
+  db:
+  redis_volume_data:

@@ -13,6 +13,8 @@ type (
 		Redis    RedisConfig
 		JWT      JWTConfig
 		RabbitMQ RabbitMQConfig
+		Auth     string
+		Booking  string
 	}
 	JWTConfig struct {
 		SecretKey string
@@ -60,6 +62,8 @@ func (c *Config) Load() error {
 
 	c.RabbitMQ.RabbitMQ = os.Getenv("RABBITMQ_URL")
 
+	//gateway specific config
+	c.Auth = os.Getenv("")
 	return nil
 }
 

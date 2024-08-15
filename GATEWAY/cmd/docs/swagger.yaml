@@ -239,6 +239,72 @@ definitions:
           $ref: '#/definitions/providers.Provider'
         type: array
     type: object
+  reviews.CreateResp:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+    type: object
+  reviews.NewData:
+    properties:
+      comment:
+        type: string
+      id:
+        type: string
+      rating:
+        type: integer
+    type: object
+  reviews.NewReview:
+    properties:
+      booking_id:
+        type: string
+      comment:
+        type: string
+      provider_id:
+        type: string
+      rating:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  reviews.Review:
+    properties:
+      booking_id:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      provider_id:
+        type: string
+      rating:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  reviews.ReviewsList:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      reviews:
+        items:
+          $ref: '#/definitions/reviews.Review'
+        type: array
+    type: object
+  reviews.UpdateResp:
+    properties:
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
   services.CreateResp:
     properties:
       created_at:
@@ -742,6 +808,148 @@ paths:
       summary: Search for providers
       tags:
       - Provider
+  /reviews:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of reviews with optional filtering
+      parameters:
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: page
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reviews.ReviewsList'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all reviews
+      tags:
+      - Reviews
+    post:
+      consumes:
+      - application/json
+      description: Create a new review with the given details
+      parameters:
+      - description: CreateReview Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/reviews.NewReview'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/reviews.CreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new review
+      tags:
+      - Reviews
+  /reviews/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a review by its ID
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete review by ID
+      tags:
+      - Reviews
+    put:
+      consumes:
+      - application/json
+      description: Update the details of a review by its ID
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: UpdateReview Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/reviews.NewData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reviews.UpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update review by ID
+      tags:
+      - Reviews
   /services:
     get:
       consumes:

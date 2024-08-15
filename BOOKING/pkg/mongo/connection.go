@@ -1,20 +1,42 @@
-package mongo
+package mongodb
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"time"
+
+	"booking-service/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func ConnectDB() *mongo.Client {
+func ConnectDB(config *config.Config) (*mongo.Database, error) {
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s",
+		config.MongoConfig.User,
+		config.MongoConfig.Password,
+		config.MongoConfig.Host,
+		config.MongoConfig.Port)
+	fmt.Println(uri)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	clientOptions := options.Client().ApplyURI(uri)
+
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Println(err)
-		return nil
+		return nil, err
 	}
 
-	return client
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	db := client.Database(config.MongoConfig.DBname)
+
+	log.Printf("--------------------------- Connected to the database %s --------------------------------\n", config.MongoConfig.DBname)
+
+	return db, nil
 }

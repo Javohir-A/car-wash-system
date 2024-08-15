@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"log/slog"
 	"strings"
 	"time"
@@ -36,7 +37,9 @@ func (a *AuthServiceImpl) InvalidateToken(ctx context.Context, req *auth.Invalid
 }
 
 func (a *AuthServiceImpl) Login(ctx context.Context, req *auth.LoginRequest) (*auth.LoginResponse, error) {
+	log.Println(req)
 	res, err := a.storage.UserManagement().GetUserByUsernameOrEmail(ctx, "", req.Username)
+	log.Println(req)
 	if err != nil {
 		a.logger.Error(err.Error())
 		return nil, err
@@ -118,11 +121,12 @@ func (a *AuthServiceImpl) GetUserById(ctx context.Context, req *auth.UserIdReque
 
 	return res, nil
 }
+
 func (a *AuthServiceImpl) GetUsers(req *auth.GetUsersRequest, stream auth.UserManagementService_GetUsersServer) error {
 	pageSize := int32(10)
 	pageNumber := req.GetPageNumber()
 
-	for i := int32(0); i < pageNumber; i++ {
+	for i := int32(1); i < pageNumber; i++ {
 		users, err := a.storage.UserManagement().ListUsers(stream.Context(), i, pageSize)
 		if err != nil {
 			return err
