@@ -378,7 +378,6 @@ definitions:
       updated_at:
         type: string
     type: object
-host: :8080
 info:
   contact:
     email: support@swagger.io

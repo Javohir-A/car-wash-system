@@ -19,7 +19,6 @@
         },
         "version": "1.0"
     },
-    "host": ":8080",
     "basePath": "/",
     "paths": {
         "/auth/login": {
