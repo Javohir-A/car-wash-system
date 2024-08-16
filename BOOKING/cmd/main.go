@@ -71,15 +71,10 @@ func main() {
 	}()
 	var conn *amqp.Connection
 
-	// Connect to RabbitMQ
-	for i := 0; i < 10; i++ {
-		conn, err = amqp.Dial(cnf.RabbitMQ.RabbitMQ)
-		if err != nil {
-			logger.Println("error connecting to RabbitMQ: ", err)
-			time.Sleep(time.Second * 1)
-			continue
-		}
-		break
+	time.Sleep(time.Second * 15)
+	conn, err = amqp.Dial(cnf.RabbitMQ.RabbitMQ)
+	if err != nil {
+		logger.Fatal("error connecting to RabbitMQ: ", err)
 	}
 	defer conn.Close()
 
