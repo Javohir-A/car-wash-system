@@ -1,87 +1,71 @@
 package middleware
 
 import (
-	"fmt"
 	"gateway/config"
-	"gateway/internal/api/casbin"
+	"gateway/genproto/auth"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
-func Check(cfg *config.Config) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		accessToken := c.GetHeader("Authorization")
-
-		if accessToken == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Authorization header is required",
-			})
-			return
-		}
-
-		token, err := jwt.ParseWithClaims(accessToken, jwt.MapClaims{},
-			func(t *jwt.Token) (interface{}, error) {
-				if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-				}
-				return []byte(cfg.JWT.SecretKey), nil
-			})
-
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Token could not be parsed",
-			})
-			return
-		}
-
-		if !token.Valid {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Invalid token provided",
-			})
-			return
-		}
-
-		claims, ok := token.Claims.(jwt.MapClaims)
+func OnlySudo() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		strToken, ok := ctx.Get("Authorization")
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Invalid claims' type",
-			})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "making unauthorized request"})
+			ctx.Abort()
 			return
 		}
-
-		userRole, roleOk := claims["role"].(string)
-		userID, idOk := claims["user_id"].(string)
-		if !roleOk || !idOk {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Invalid token claims",
-			})
-			return
-		}
-
-		c.Set("user_id", userID)
-		c.Set("user_role", userRole)
-
-		e, err := casbin.CasbinEnforcer(cfg)
+		token, err := ExtractToken(strToken.(string))
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"error": "Policy could not be loaded",
-			})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			ctx.Abort()
 			return
 		}
 
-		ok, err = e.Enforce(userRole, c.Request.URL.Path, c.Request.Method)
-		if !ok || err != nil {
-			msg := fmt.Sprintf("Access denied: %s cannot %s %s",
-				userRole, c.Request.Method, c.Request.URL.Path,
-			)
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"error": msg,
-			})
-			return
-		}
-
-		c.Next()
 	}
+
+}
+
+type TokenData struct {
+	Id          string `json:"id"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	PhoneNumber string `json:"phone_number"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
+	Role        string `json:"role"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+	// Expiration  int    `json:"exp"`
+	jwt.RegisteredClaims
+}
+
+type Claims struct {
+	User *auth.UserResponse `json:"user"`
+	jwt.RegisteredClaims
+}
+
+func ExtractToken(str string) (*jwt.Token, error) {
+	var tokenClaim Claims
+	cnf := config.NewConfig()
+	if err := cnf.Load(); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	secretKey := cnf.JWT.SecretKey
+
+	token, err := jwt.ParseWithClaims(str, &tokenClaim, func(t *jwt.Token) (interface{}, error) {
+		return []byte(secretKey), nil
+	})
+
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return token, nil
 }

@@ -1,0 +1,14 @@
+user, /me, GET
+user, /me, PUT
+user, /me, DELETE
+
+superadmin, /sudo*, POST
+superadmin, /sudo*, PUT
+superadmin, /sudo*, GET
+superadmin, /sudo*, DELETE
+
+admin, /admin*, POST
+admin, /admin*, GET
+admin, /admin*, PUT
+admin, /admin*, DELETE
+

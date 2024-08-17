@@ -2,6 +2,7 @@ package api
 
 import (
 	"gateway/internal/api/handler"
+	"gateway/internal/api/middleware"
 
 	_ "gateway/cmd/docs"
 
@@ -39,13 +40,31 @@ func SetupRouter(r *gin.Engine, handler handler.MainHandler) {
 		auth.POST("/login", handler.Authentication().Login)
 	}
 
-	user := r.Group("/user")
+	r.Use()
+
+	supperAdmin := r.Group("/sudo")
+	supperAdmin.Use(middleware.OnlySudo())
 	{
-		user.POST("/", handler.UserManagement().CreateUser)
-		user.GET("/:id", handler.UserManagement().GetUserByID)
-		user.PUT("/", handler.UserManagement().UpdateUser)
-		user.DELETE("/:id", handler.UserManagement().DeleteUser)
-		user.GET("/", handler.UserManagement().GetUsers)
+		supperAdmin.POST("/change-role/:user_id")
+	}
+
+	admin := r.Group("/admin")
+	{
+		user := admin.Group("/user")
+		{
+			user.POST("/", handler.UserManagement().CreateUser)
+			user.GET("/:id", handler.UserManagement().GetUserByID)
+			user.PUT("/", handler.UserManagement().UpdateUser)
+			user.DELETE("/:id", handler.UserManagement().DeleteUser)
+			user.GET("/", handler.UserManagement().GetUsers)
+		}
+	}
+
+	me := r.Group("/me")
+	{
+		me.GET("")
+		me.PUT("")
+		me.DELETE("")
 	}
 
 	providers := r.Group("/provider")
