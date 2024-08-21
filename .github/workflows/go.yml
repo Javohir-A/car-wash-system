@@ -29,7 +29,7 @@ jobs:
         docker push javohirgo/car-wash-system-auth:latest
 
     - name: Execute Commands on Remote Server
-      uses: appleboy/ssh-action@v1.0.3
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.LIGHTSAIL_HOST }}
         username: ${{ secrets.LIGHTSAIL_USER }}
