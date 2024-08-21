@@ -28,14 +28,17 @@ jobs:
         docker push javohirgo/car-wash-system-booking:latest
         docker push javohirgo/car-wash-system-auth:latest
 
-    - name: SSH into AWS Lightsail and Deploy
-      uses: appleboy/ssh-action@v0.1.0
+    - name: Execute Commands on Remote Server
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.LIGHTSAIL_HOST }}
-        username: ${{ secrets.LIGHTSAIL_USER }}
-        key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
         script: |
-          cd /path/to/your/project
+          cd /car-wash-system
           docker compose down
           docker compose pull
           docker compose up -d
+        timeout: 30s
+        command_timeout: 10m
