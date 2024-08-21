@@ -16,6 +16,7 @@ import (
 	"net"
 	"os"
 	"sync"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/grpc"
