@@ -1,0 +1,41 @@
+name: Deploy to AWS Lightsail
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Build Docker images
+      run: |
+        docker build -t javohirgo/car-wash-system-gateway ./GATEWAY
+        docker build -t javohirgo/car-wash-system-booking ./BOOKING
+        docker build -t javohirgo/car-wash-system-auth ./AUTH
+
+    - name: Push Docker images to Docker Hub
+      run: |
+        docker push javohirgo/car-wash-system-gateway:latest
+        docker push javohirgo/car-wash-system-booking:latest
+        docker push javohirgo/car-wash-system-auth:latest
+
+    - name: SSH into AWS Lightsail and Deploy
+      uses: appleboy/ssh-action@v0.1.0
+      with:
+        host: ${{ secrets.LIGHTSAIL_HOST }}
+        username: ${{ secrets.LIGHTSAIL_USER }}
+        key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+        script: |
+          cd /path/to/your/project
+          docker compose down
+          docker compose pull
+          docker compose up -d
