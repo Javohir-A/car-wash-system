@@ -35,7 +35,7 @@ jobs:
         username: ${{ secrets.LIGHTSAIL_USER }}
         key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
         script: |
-          cd /path/to/your/project
+          cd /car-wash-system
           docker compose down
           docker compose pull
           docker compose up -d
