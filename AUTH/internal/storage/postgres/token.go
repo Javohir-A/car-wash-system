@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -41,7 +42,7 @@ func (t *TokenSQL) GenerateToken(ctx context.Context, userId string) (string, er
 	if err != nil {
 		return "", err
 	}
-
+	log.Println(user)
 	cnf := config.NewConfig()
 	if err := cnf.Load(); err != nil {
 		return "", err

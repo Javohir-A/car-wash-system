@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -167,34 +168,37 @@ func (um *UserManagementImpl) GetUserByID(ctx context.Context, id string) (*auth
 
 	return &user, nil
 }
-
 func (um *UserManagementImpl) UpdateUser(ctx context.Context, user *auth.UserRequest) (*auth.UserResponse, error) {
+	if user == nil {
+		return nil, errors.New("user request cannot be nil")
+	}
+
 	tx, err := um.db.Begin()
 	if err != nil {
 		return nil, err
 	}
 	defer tx.Rollback()
 
-	query := um.sqlBuilder.
-		Update("users").
+	query := um.sqlBuilder.Update("users").
 		Set("first_name", user.FirstName).
 		Set("last_name", user.LastName).
 		Set("phone_number", user.PhoneNumber).
 		Set("username", user.Username).
-		Set("email", user.Email).
 		Set("role", user.Role).
+		Set("password_hash", user.Password).
 		Where(sq.And{
 			sq.Eq{"id": user.Id},
 			sq.Eq{"deleted_at": nil},
-		}).
-		Suffix("RETURNING created_at, updated_at")
+		}).Suffix("RETURNING created_at, updated_at")
 
 	sql, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
 	}
 
+	log.Printf("Executing SQL: %s", sql)
 	row := tx.QueryRowContext(ctx, sql, args...)
+
 	res := &auth.UserResponse{
 		Id:          user.Id,
 		FirstName:   user.FirstName,
@@ -204,18 +208,20 @@ func (um *UserManagementImpl) UpdateUser(ctx context.Context, user *auth.UserReq
 		Email:       user.Email,
 		Role:        user.Role,
 	}
+
 	var createdAt, updatedAt string
 	if err := row.Scan(&createdAt, &updatedAt); err != nil {
-		log.Println("failed to scan user")
+		log.Println("Failed to scan user")
 		return nil, err
 	}
+
 	createdTimeType, err := time.Parse(time.RFC3339, createdAt)
 	if err != nil {
-		return nil, nil
+		return nil, fmt.Errorf("failed to parse created_at: %w", err)
 	}
 	updatedTimeType, err := time.Parse(time.RFC3339, updatedAt)
 	if err != nil {
-		return nil, nil
+		return nil, fmt.Errorf("failed to parse updated_at: %w", err)
 	}
 	res.CreatedAt = timestamppb.New(createdTimeType)
 	res.UpdatedAt = timestamppb.New(updatedTimeType)
@@ -231,8 +237,11 @@ func (um *UserManagementImpl) UpdateUser(ctx context.Context, user *auth.UserReq
 		return nil, err
 	}
 
-	tx.Commit()
-	return res, err
+	if err := tx.Commit(); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return res, nil
 }
 
 func (um *UserManagementImpl) DeleteUser(ctx context.Context, id string) error {

@@ -6,53 +6,74 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
-
-func OnlySudo() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		strToken, ok := ctx.Get("Authorization")
-		if !ok {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "making unauthorized request"})
-			ctx.Abort()
-			return
-		}
-		token, err := ExtractToken(strToken.(string))
-		if err != nil {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
-			ctx.Abort()
-			return
-		}
-
-	}
-
-}
-
-type TokenData struct {
-	Id          string `json:"id"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	PhoneNumber string `json:"phone_number"`
-	Username    string `json:"username"`
-	Email       string `json:"email"`
-	Role        string `json:"role"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
-	// Expiration  int    `json:"exp"`
-	jwt.RegisteredClaims
-}
 
 type Claims struct {
 	User *auth.UserResponse `json:"user"`
 	jwt.RegisteredClaims
 }
 
+func PermmissonChecker() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		strToken := ctx.Request.Header.Get("Authorization")
+		log.Println("Authorization Header:", strToken)
+
+		token, err := ExtractToken(strToken)
+		if err != nil || !token.Valid {
+			log.Println("Invalid token:", err)
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired token"})
+			ctx.Abort()
+			return
+		}
+
+		obj := ctx.Request.URL.Path
+		act := ctx.Request.Method
+
+		if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+			role := claims.User.Role
+
+			log.Println("sub: ", role, "obj:", obj, "act:", act)
+
+			enforcer, err := casbin.NewEnforcer("./internal/api/casbin/model.conf",
+				"./internal/api/casbin/policy.csv")
+			if err != nil {
+				log.Println("Failed to create enforcer:", err)
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+				ctx.Abort()
+				return
+			}
+
+			ok, err := enforcer.Enforce(role, obj, act)
+			if err != nil {
+				log.Println("Enforcement error:", err)
+				ctx.JSON(http.StatusForbidden, gin.H{"error": "not allowed"})
+				ctx.Abort()
+				return
+			}
+			if !ok {
+				log.Println("Access denied for role:", role)
+				ctx.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+				ctx.Abort()
+				return
+			}
+		} else {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token claims"})
+			ctx.Abort()
+			return
+		}
+
+		ctx.Next()
+	}
+}
+
 func ExtractToken(str string) (*jwt.Token, error) {
 	var tokenClaim Claims
 	cnf := config.NewConfig()
 	if err := cnf.Load(); err != nil {
-		log.Println(err)
+		log.Println("Failed to load config:", err)
 		return nil, err
 	}
 
@@ -63,7 +84,7 @@ func ExtractToken(str string) (*jwt.Token, error) {
 	})
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Failed to parse token:", err)
 		return nil, err
 	}
 

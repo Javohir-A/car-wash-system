@@ -28,10 +28,11 @@ func NewPaymentHandler(client pb.PaymentsClient) *PaymentHandler {
 // @Accept json
 // @Produce json
 // @Param request body payments.NewPayment true "CreatePayment Request"
+// @Security BearerAuth
 // @Success 201 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /payments [post]
+// @Router /admin/payments [post]
 func (h *PaymentHandler) CreatePayment(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -60,10 +61,11 @@ func (h *PaymentHandler) CreatePayment(c *gin.Context) {
 // @Produce json
 // @Param limit query string true "limit"
 // @Param page query string true "page"
+// @Security BearerAuth
 // @Success 200 {object} payments.PaymentsList
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /payments [get]
+// @Router /admin/payments [get]
 func (h *PaymentHandler) ListPayments(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -98,11 +100,12 @@ func (h *PaymentHandler) ListPayments(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Payment ID"
+// @Security BearerAuth
 // @Success 200 {object} payments.Payment
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /payments/{id} [get]
+// @Router /admin/payments/{id} [get]
 func (h *PaymentHandler) GetPayment(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

@@ -28,19 +28,21 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	/**
 
+	 **/
 	logger := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 	router := gin.Default()
 
-	authConn, err := grpc.NewClient("auth:"+cnf.Auth, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	authConn, err := grpc.NewClient(cnf.Server.Host+":"+cnf.Auth, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Fatal("Failed to connect to gRPC server:", err)
 		return
 	}
 	defer authConn.Close()
 
-	bookingConn, err := grpc.NewClient("booking:"+cnf.Booking, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	bookingConn, err := grpc.NewClient(cnf.Server.Host+":"+cnf.Booking, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("Failed to connect to gRPC server:", err)
 		return
@@ -62,6 +64,8 @@ func main() {
 	serHandler := handler.NewServiceManagementHandler(serClient)
 	paymentsHandler := handler.NewPaymentHandler(paymentClient)
 	reviewsHandler := handler.NewReviewHandler(reviewsClient)
+	sudoHandler := handler.NewSudoHandler(userClient)
+
 	var conn *amqp.Connection
 
 	time.Sleep(time.Second * 15)
@@ -112,6 +116,7 @@ func main() {
 		bookingHandler,
 		paymentsHandler,
 		reviewsHandler,
+		sudoHandler,
 	)
 
 	api.SetupRouter(router, mainHandler)

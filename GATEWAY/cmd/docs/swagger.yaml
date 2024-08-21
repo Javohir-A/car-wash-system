@@ -378,6 +378,7 @@ definitions:
       updated_at:
         type: string
     type: object
+host: localhost:8080
 info:
   contact:
     email: support@swagger.io
@@ -391,73 +392,7 @@ info:
   title: '# Car Wash System'
   version: "1.0"
 paths:
-  /auth/login:
-    post:
-      consumes:
-      - application/json
-      description: Log in a user with email and password
-      parameters:
-      - description: Login Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties: true
-            type: object
-      summary: User login
-      tags:
-      - User Auth
-  /auth/register:
-    post:
-      consumes:
-      - application/json
-      description: Register a new user with an email and password
-      parameters:
-      - description: Register Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.RegisterRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Register a new user
-      tags:
-      - User Auth
-  /booking:
+  /admin/booking:
     post:
       consumes:
       - application/json
@@ -487,10 +422,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create a new booking
       tags:
       - Bookings
-  /booking/{id}:
+  /admin/booking/{id}:
     delete:
       consumes:
       - application/json
@@ -521,6 +458,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete booking by ID
       tags:
       - Bookings
@@ -556,6 +495,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get booking by ID
       tags:
       - Bookings
@@ -598,10 +539,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update booking by ID
       tags:
       - Bookings
-  /booking/search:
+  /admin/booking/search:
     post:
       consumes:
       - application/json
@@ -634,10 +577,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: List all bookings
       tags:
       - Bookings
-  /payments:
+  /admin/payments:
     get:
       consumes:
       - application/json
@@ -670,6 +615,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: List all payments
       tags:
       - Payments
@@ -702,10 +649,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create a new payment
       tags:
       - Payments
-  /payments/{id}:
+  /admin/payments/{id}:
     get:
       consumes:
       - application/json
@@ -738,10 +687,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get payment by ID
       tags:
       - Payments
-  /provider/register:
+  /admin/provider/register:
     post:
       consumes:
       - application/json
@@ -771,10 +722,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Register a new provider
       tags:
       - Provider
-  /provider/search:
+  /admin/provider/search:
     post:
       consumes:
       - application/json
@@ -804,10 +757,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Search for providers
       tags:
       - Provider
-  /reviews:
+  /admin/reviews:
     get:
       consumes:
       - application/json
@@ -840,6 +795,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: List all reviews
       tags:
       - Reviews
@@ -871,10 +828,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create a new review
       tags:
       - Reviews
-  /reviews/{id}:
+  /admin/reviews/{id}:
     delete:
       consumes:
       - application/json
@@ -905,6 +864,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete review by ID
       tags:
       - Reviews
@@ -946,10 +907,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update review by ID
       tags:
       - Reviews
-  /services:
+  /admin/services:
     get:
       consumes:
       - application/json
@@ -978,6 +941,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: List all services
       tags:
       - Service
@@ -1009,10 +974,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create a new service
       tags:
       - Service
-  /services/{id}:
+  /admin/services/{id}:
     delete:
       consumes:
       - application/json
@@ -1041,6 +1008,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete a specific service by ID
       tags:
       - Service
@@ -1071,6 +1040,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get a specific service by ID
       tags:
       - Service
@@ -1107,10 +1078,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update a specific service by ID
       tags:
       - Service
-  /user/:
+  /admin/user/:
     get:
       consumes:
       - application/json
@@ -1144,6 +1117,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: get users by page and limit
       tags:
       - User
@@ -1176,6 +1151,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: UserCreate a new user
       tags:
       - User
@@ -1208,9 +1185,154 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update a user
       tags:
       - User
+  /admin/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user by id
+      parameters:
+      - description: Get user by id Request
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get a user by their id
+      tags:
+      - User
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Log in a user with email and password
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: User login
+      tags:
+      - User Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with an email and password
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Register a new user
+      tags:
+      - User Auth
+  /sudo/change-role/{user_id}:
+    post:
+      consumes:
+      - application/json
+      description: Give permmisson to a user
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: role
+        in: query
+        name: role
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Change user role, only for sudo
+      tags:
+      - Sudo
   /user/{id}:
     delete:
       consumes:
@@ -1240,38 +1362,9 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete a user by their id
-      tags:
-      - User
-    get:
-      consumes:
-      - application/json
-      description: Get user by id
-      parameters:
-      - description: Get user by id Request
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Get a user by their id
       tags:
       - User
 schemes:

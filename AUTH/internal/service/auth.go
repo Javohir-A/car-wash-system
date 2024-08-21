@@ -146,15 +146,60 @@ func (a *AuthServiceImpl) GetUsers(req *auth.GetUsersRequest, stream auth.UserMa
 }
 
 func (a *AuthServiceImpl) UpdateUser(ctx context.Context, req *auth.UserRequest) (*auth.UserResponse, error) {
-	_, err := a.storage.UserManagement().GetUserByUsernameOrEmail(ctx, req.GetEmail(), req.GetUsername())
-	if err != sql.ErrNoRows {
-		return nil, fmt.Errorf("username or email exists")
+	user, err := a.storage.UserManagement().GetUserByID(ctx, req.GetId())
+	if err != nil {
+		log.Println("failed to get user to compare with updated user data: ", err)
+		return nil, err
 	}
 
-	req.Password, err = HashPassword(req.Password)
-	if err != nil {
-		a.logger.Error(err.Error())
-		return nil, err
+	if req.Username != "" || req.Email != "" {
+		_, err := a.storage.UserManagement().GetUserByUsernameOrEmail(ctx, req.GetEmail(), req.GetUsername())
+		if err != sql.ErrNoRows {
+			return nil, fmt.Errorf("username or email exists")
+		}
+	}
+
+	updatedFieldsCount := 0
+
+	if req.Password != "" {
+		req.Password, err = HashPassword(req.Password)
+		if err != nil {
+			a.logger.Error(err.Error())
+			return nil, err
+		}
+		updatedFieldsCount++
+	}
+
+	if req.Email == "" {
+		req.Email = user.Email
+		updatedFieldsCount++
+	}
+	if req.FirstName == "" {
+		req.FirstName = user.FirstName
+		updatedFieldsCount++
+	}
+	if req.LastName == "" {
+		req.LastName = user.LastName
+		updatedFieldsCount++
+	}
+	if req.PhoneNumber == "" {
+		req.PhoneNumber = user.PhoneNumber
+		updatedFieldsCount++
+	}
+	if req.Role == "" {
+		req.Role = user.Role
+		updatedFieldsCount++
+	}
+	if req.Username == "" {
+		req.Username = user.Username
+		updatedFieldsCount++
+	}
+	if req.Password == "" {
+		req.Password = user.Password
+	}
+
+	if updatedFieldsCount == 0 {
+		return nil, fmt.Errorf("no fields provided to update")
 	}
 
 	res, err := a.storage.UserManagement().UpdateUser(ctx, req)

@@ -27,10 +27,11 @@ func NewProviderManagementHandler(client pb.ProvidersClient) *ProviderManagement
 // @Accept json
 // @Produce json
 // @Param request body providers.NewProvider true "RegisterProvider Request"
+// @Security BearerAuth
 // @Success 201 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /provider/register [post]
+// @Router /admin/provider/register [post]
 func (h *ProviderManagementHandler) RegisterProvider(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -41,7 +42,6 @@ func (h *ProviderManagementHandler) RegisterProvider(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
-
 	res, err := h.pro.CreateProvider(ctx, &req) // Assuming the gRPC method is still named `CreateProvider`
 	if err != nil {
 		log.Println(err)
@@ -58,10 +58,11 @@ func (h *ProviderManagementHandler) RegisterProvider(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body providers.Filter true "SearchProviders Request"
+// @Security BearerAuth
 // @Success 200 {object} providers.SearchResp
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /provider/search [post]
+// @Router /admin/provider/search [post]
 func (h *ProviderManagementHandler) SearchProviders(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

@@ -27,10 +27,11 @@ func NewServiceManagementHandler(client pb.ServicesClient) *ServiceManagementHan
 // @Accept json
 // @Produce json
 // @Param request body services.NewService true "CreateService Request"
+// @Security BearerAuth
 // @Success 201 {object} services.CreateResp
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /services [post]
+// @Router /admin/services [post]
 func (h *ServiceManagementHandler) CreateService(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -58,10 +59,11 @@ func (h *ServiceManagementHandler) CreateService(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body services.Pagination true "Pagination Request"
+// @Security BearerAuth
 // @Success 200 {object} services.ServicesList
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /services [get]
+// @Router /admin/services [get]
 func (h *ServiceManagementHandler) ListServices(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -89,10 +91,11 @@ func (h *ServiceManagementHandler) ListServices(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Service ID"
+// @Security BearerAuth
 // @Success 200 {object} services.Service
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /services/{id} [get]
+// @Router /admin/services/{id} [get]
 func (h *ServiceManagementHandler) GetServiceByID(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -124,10 +127,11 @@ func (h *ServiceManagementHandler) GetServiceByID(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Service ID"
 // @Param request body services.NewData true "UpdateService Request"
+// @Security BearerAuth
 // @Success 200 {object} services.UpdateResp
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /services/{id} [put]
+// @Router /admin/services/{id} [put]
 func (h *ServiceManagementHandler) UpdateService(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -164,10 +168,11 @@ func (h *ServiceManagementHandler) UpdateService(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Service ID"
+// @Security BearerAuth
 // @Success 204 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /services/{id} [delete]
+// @Router /admin/services/{id} [delete]
 func (h *ServiceManagementHandler) DeleteService(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

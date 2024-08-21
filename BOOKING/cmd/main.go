@@ -16,7 +16,6 @@ import (
 	"net"
 	"os"
 	"sync"
-	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/grpc"
@@ -69,6 +68,7 @@ func main() {
 			logger.Fatalf("Failed to serve gRPC server: %v", err)
 		}
 	}()
+
 	var conn *amqp.Connection
 
 	time.Sleep(time.Second * 15)
@@ -76,6 +76,7 @@ func main() {
 	if err != nil {
 		logger.Fatal("error connecting to RabbitMQ: ", err)
 	}
+
 	defer conn.Close()
 
 	ch, err := conn.Channel()

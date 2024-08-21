@@ -8,6 +8,7 @@ type MainHandler interface {
 	BookingsManagement() *BookingHandler
 	PaymentManagement() *PaymentHandler
 	ReviewManagement() *ReviewHandler
+	SudoManagement() *SudoHandler
 }
 
 type MainHandlerImp struct {
@@ -18,11 +19,12 @@ type MainHandlerImp struct {
 	booking *BookingHandler
 	payment *PaymentHandler
 	reviews *ReviewHandler
+	sudo    *SudoHandler
 }
 
 func NewMainHandler(user *UserManagementHandler, auth *AuthHandler,
 	pro *ProviderManagementHandler, ser *ServiceManagementHandler,
-	bookings *BookingHandler, payment *PaymentHandler, rev *ReviewHandler) MainHandler {
+	bookings *BookingHandler, payment *PaymentHandler, rev *ReviewHandler, sudo *SudoHandler) MainHandler {
 	return &MainHandlerImp{
 		user:    user,
 		auth:    auth,
@@ -31,6 +33,7 @@ func NewMainHandler(user *UserManagementHandler, auth *AuthHandler,
 		booking: bookings,
 		payment: payment,
 		reviews: rev,
+		sudo:    sudo,
 	}
 }
 
@@ -60,4 +63,8 @@ func (m *MainHandlerImp) PaymentManagement() *PaymentHandler {
 
 func (m *MainHandlerImp) ReviewManagement() *ReviewHandler {
 	return m.reviews
+}
+
+func (m *MainHandlerImp) SudoManagement() *SudoHandler {
+	return m.sudo
 }

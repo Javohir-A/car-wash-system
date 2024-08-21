@@ -29,10 +29,11 @@ func NewReviewHandler(client pb.ReviewsClient) *ReviewHandler {
 // @Accept json
 // @Produce json
 // @Param request body reviews.NewReview true "CreateReview Request"
+// @Security BearerAuth
 // @Success 201 {object} reviews.CreateResp
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /reviews [post]
+// @Router /admin/reviews [post]
 func (h *ReviewHandler) CreateReview(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -61,10 +62,11 @@ func (h *ReviewHandler) CreateReview(c *gin.Context) {
 // @Produce json
 // @Param limit query string true "limit"
 // @Param page query string true "page"
+// @Security BearerAuth
 // @Success 200 {object} reviews.ReviewsList
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /reviews [get]
+// @Router /admin/reviews [get]
 func (h *ReviewHandler) ListReviews(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -132,11 +134,12 @@ func (h *ReviewHandler) ListReviews(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Review ID"
 // @Param request body reviews.NewData true "UpdateReview Request"
+// @Security BearerAuth
 // @Success 200 {object} reviews.UpdateResp
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /reviews/{id} [put]
+// @Router /admin/reviews/{id} [put]
 func (h *ReviewHandler) UpdateReview(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -166,11 +169,12 @@ func (h *ReviewHandler) UpdateReview(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Review ID"
+// @Security BearerAuth
 // @Success 204 {object} nil
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /reviews/{id} [delete]
+// @Router /admin/reviews/{id} [delete]
 func (h *ReviewHandler) DeleteReview(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

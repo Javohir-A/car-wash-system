@@ -1,14 +1,16 @@
-user, /me, GET
-user, /me, PUT
-user, /me, DELETE
+# Policy Rules
+p, user, /me, GET, allow
+p, user, /me, PUT, allow
+p, user, /me, DELETE, allow
 
-superadmin, /sudo*, POST
-superadmin, /sudo*, PUT
-superadmin, /sudo*, GET
-superadmin, /sudo*, DELETE
+p, sudo, /sudo*, POST, allow
+p, sudo, /sudo*, PUT, allow
+p, sudo, /sudo*, GET, allow
+p, sudo, /sudo*, DELETE, allow
 
-admin, /admin*, POST
-admin, /admin*, GET
-admin, /admin*, PUT
-admin, /admin*, DELETE
+p, admin, /admin*, POST, allow
+p, admin, /admin*, GET, allow
+p, admin, /admin*, PUT, allow
+p, admin, /admin*, DELETE, allow
 
+g, sudo, admin  

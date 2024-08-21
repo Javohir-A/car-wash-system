@@ -30,10 +30,11 @@ func NewUserManagementHandler(client auth.UserManagementServiceClient) *UserMana
 // @Accept json
 // @Produce json
 // @Param request body auth.UserRequest true "CreateUser Request"
+// @Security BearerAuth
 // @Success 201 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /user/ [post]
+// @Router /admin/user/ [post]
 func (u *UserManagementHandler) CreateUser(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -61,10 +62,11 @@ func (u *UserManagementHandler) CreateUser(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Get user by id Request"
+// @Security BearerAuth
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /user/{id} [get]
+// @Router /admin/user/{id} [get]
 func (u *UserManagementHandler) GetUserByID(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -93,6 +95,7 @@ func (u *UserManagementHandler) GetUserByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Delete user by id Request"
+// @Security BearerAuth
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
@@ -125,10 +128,11 @@ func (u *UserManagementHandler) DeleteUser(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body auth.UserRequest true "UpdateUser Request"
+// @Security BearerAuth
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /user/ [put]
+// @Router /admin/user/ [put]
 func (u *UserManagementHandler) UpdateUser(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -164,10 +168,11 @@ func (u *UserManagementHandler) UpdateUser(c *gin.Context) {
 // @Produce json
 // @Param page query string true "page"
 // @Param limit query string true "limit"
+// @Security BearerAuth
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /user/ [get]
+// @Router /admin/user/ [get]
 func (u *UserManagementHandler) GetUsers(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

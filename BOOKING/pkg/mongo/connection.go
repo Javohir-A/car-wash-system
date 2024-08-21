@@ -13,11 +13,18 @@ import (
 )
 
 func ConnectDB(config *config.Config) (*mongo.Database, error) {
+
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s",
 		config.MongoConfig.User,
 		config.MongoConfig.Password,
 		config.MongoConfig.Host,
 		config.MongoConfig.Port)
+	// uri := fmt.Sprintf("mongodb://%s:%s",
+	// 	config.MongoConfig.User,
+	// 	config.MongoConfig.Password,
+	// 	config.MongoConfig.Host,
+	// 	config.MongoConfig.Port)
+	// log.Println("Mongo started on localhost. Note: if deployment fails uncomment first connection code.")
 	fmt.Println(uri)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

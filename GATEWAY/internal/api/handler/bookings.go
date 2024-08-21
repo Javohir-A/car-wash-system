@@ -42,10 +42,11 @@ func NewBookingHandler(client pb.BookingsClient, create amqp.Queue, update amqp.
 // @Accept json
 // @Produce json
 // @Param request body bookings.NewBooking true "CreateBooking Request"
+// @Security BearerAuth
 // @Success 201 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /booking [post]
+// @Router /admin/booking [post]
 func (h *BookingHandler) CreateBooking(c *gin.Context) {
 
 	var req pb.NewBooking
@@ -80,10 +81,11 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 // @Produce json
 // @Param limit query string true "limit"
 // @Param page query string true "page"
+// @Security BearerAuth
 // @Success 200 {object} bookings.BookingsList
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /booking/search [post]
+// @Router /admin/booking/search [post]
 func (h *BookingHandler) ListBookings(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -123,10 +125,11 @@ func (h *BookingHandler) ListBookings(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Booking ID"
 // @Success 200 {object} bookings.Booking
+// @Security BearerAuth
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /booking/{id} [get]
+// @Router /admin/booking/{id} [get]
 func (h *BookingHandler) GetBooking(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -152,11 +155,12 @@ func (h *BookingHandler) GetBooking(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Booking ID"
 // @Param request body bookings.NewData true "UpdateBooking Request"
+// @Security BearerAuth
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /booking/{id} [put]
+// @Router /admin/booking/{id} [put]
 func (h *BookingHandler) UpdateBooking(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -186,11 +190,12 @@ func (h *BookingHandler) UpdateBooking(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Booking ID"
+// @Security BearerAuth
 // @Success 204 {object} nil
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /booking/{id} [delete]
+// @Router /admin/booking/{id} [delete]
 func (h *BookingHandler) DeleteBooking(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

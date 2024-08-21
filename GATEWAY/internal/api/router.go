@@ -25,7 +25,7 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 //
-// @host
+// @host localhost:8080
 // @BasePath /
 // @schemes http https
 //
@@ -43,12 +43,13 @@ func SetupRouter(r *gin.Engine, handler handler.MainHandler) {
 	r.Use()
 
 	supperAdmin := r.Group("/sudo")
-	supperAdmin.Use(middleware.OnlySudo())
+	supperAdmin.Use(middleware.PermmissonChecker())
 	{
-		supperAdmin.POST("/change-role/:user_id")
+		supperAdmin.POST("/change-role/:user_id", handler.SudoManagement().ChangeUserRole)
 	}
 
 	admin := r.Group("/admin")
+	admin.Use(middleware.PermmissonChecker())
 	{
 		user := admin.Group("/user")
 		{
@@ -57,6 +58,44 @@ func SetupRouter(r *gin.Engine, handler handler.MainHandler) {
 			user.PUT("/", handler.UserManagement().UpdateUser)
 			user.DELETE("/:id", handler.UserManagement().DeleteUser)
 			user.GET("/", handler.UserManagement().GetUsers)
+		}
+		providers := admin.Group("/provider")
+		{
+			providers.POST("/register", handler.ProviderManagement().RegisterProvider)
+			providers.POST("/search", handler.ProviderManagement().SearchProviders)
+		}
+		services := admin.Group("/services")
+		{
+			services.POST("/", handler.ServiceManagement().CreateService)
+			services.GET("/", handler.ServiceManagement().ListServices)
+			services.GET("/:id", handler.ServiceManagement().GetServiceByID)
+			services.PUT("/:id", handler.ServiceManagement().UpdateService)
+			services.DELETE("/:id", handler.ServiceManagement().DeleteService)
+		}
+
+		bookings := admin.Group("/booking")
+		{
+			bookings.POST("", handler.BookingsManagement().CreateBooking)
+			bookings.POST("/search", handler.BookingsManagement().ListBookings)
+			bookings.GET("/:id", handler.BookingsManagement().GetBooking)
+			bookings.PUT("/:id", handler.BookingsManagement().UpdateBooking)
+			bookings.DELETE("/:id", handler.BookingsManagement().DeleteBooking)
+		}
+
+		payments := admin.Group("/payments")
+		{
+			payments.POST("", handler.PaymentManagement().CreatePayment)
+			payments.GET("/:id", handler.PaymentManagement().GetPayment)
+			payments.GET("", handler.PaymentManagement().ListPayments)
+		}
+
+		reviews := admin.Group("/reviews")
+		{
+			reviews.POST("/", handler.ReviewManagement().CreateReview)
+			reviews.GET("/", handler.ReviewManagement().ListReviews)
+			// reviews.GET("/:id", handler.ReviewManagement().GetReview)
+			reviews.PUT("/:id", handler.ReviewManagement().UpdateReview)
+			reviews.DELETE("/:id", handler.ReviewManagement().DeleteReview)
 		}
 	}
 
@@ -67,42 +106,4 @@ func SetupRouter(r *gin.Engine, handler handler.MainHandler) {
 		me.DELETE("")
 	}
 
-	providers := r.Group("/provider")
-	{
-		providers.POST("/register", handler.ProviderManagement().RegisterProvider)
-		providers.POST("/search", handler.ProviderManagement().SearchProviders)
-	}
-	services := r.Group("/services")
-	{
-		services.POST("/", handler.ServiceManagement().CreateService)
-		services.GET("/", handler.ServiceManagement().ListServices)
-		services.GET("/:id", handler.ServiceManagement().GetServiceByID)
-		services.PUT("/:id", handler.ServiceManagement().UpdateService)
-		services.DELETE("/:id", handler.ServiceManagement().DeleteService)
-	}
-
-	bookings := r.Group("/booking")
-	{
-		bookings.POST("", handler.BookingsManagement().CreateBooking)
-		bookings.POST("/search", handler.BookingsManagement().ListBookings)
-		bookings.GET("/:id", handler.BookingsManagement().GetBooking)
-		bookings.PUT("/:id", handler.BookingsManagement().UpdateBooking)
-		bookings.DELETE("/:id", handler.BookingsManagement().DeleteBooking)
-	}
-
-	payments := r.Group("/payments")
-	{
-		payments.POST("", handler.PaymentManagement().CreatePayment)
-		payments.GET("/:id", handler.PaymentManagement().GetPayment)
-		payments.GET("", handler.PaymentManagement().ListPayments)
-	}
-
-	reviews := r.Group("/reviews")
-	{
-		reviews.POST("/", handler.ReviewManagement().CreateReview)
-		reviews.GET("/", handler.ReviewManagement().ListReviews)
-		// reviews.GET("/:id", handler.ReviewManagement().GetReview)
-		reviews.PUT("/:id", handler.ReviewManagement().UpdateReview)
-		reviews.DELETE("/:id", handler.ReviewManagement().DeleteReview)
-	}
 }

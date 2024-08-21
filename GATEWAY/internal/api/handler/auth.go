@@ -30,6 +30,7 @@ func NewAuthHandler(authClient auth.AuthServiceClient, userClient auth.UserManag
 // @Tags User Auth
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body models.RegisterRequest true "Register Request"
 // @Success 201 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
@@ -75,6 +76,7 @@ func (a *AuthHandler) Register(c *gin.Context) {
 // @Tags User Auth
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body auth.LoginRequest true "Login Request"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
